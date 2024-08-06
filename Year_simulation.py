@@ -245,7 +245,7 @@ def Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap, wt_pu
         # Pgas = np.zeros((N_Gas, T))
         # Pwt = np.zeros((N_wt, T))
         # Ppv = np.zeros((N_pv, T))
-        Pabn = np.zeros(T)
+        Pabn = [cp.Variable() for _ in range(T)]
         # Pgrid = np.zeros(T)
 
         Pbc = cp.Variable((N_ESS, T))  # battery bc
@@ -323,7 +323,7 @@ def Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap, wt_pu
 
         # convert np 2 cp
         # Pgrid = cp.Variable(shape=Pgrid.shape, value=Pgrid)
-        Pabn = cp.Variable(shape=Pabn.shape, value=Pabn)
+        # Pabn = cp.Variable(shape=Pabn.shape, value=Pabn)
         # Pgas = cp.Variable(shape=Pgas.shape, value=Pgas)
         # Pbd = cp.Variable(shape=Pbd.shape, value=Pbd)
         # Pbc = cp.Variable(shape=Pbc.shape, value=Pbc)
@@ -353,7 +353,7 @@ def Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap, wt_pu
         Pwt_value = Pwt.value
         Ppv_value = Ppv.value
         Pgas_value = Pgas.value
-        Pabn_value = Pabn.value
+        Pabn_value = np.array([Pabn[k].value for k in range(T)])
         Pgrid_value = Pgrid.value
         pun_abn_value = pun_abn.value
         Pbd_value = Pbd.value
