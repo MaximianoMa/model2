@@ -11,23 +11,36 @@ T_week = 168
 
 # Load
 days_of_month = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
-load_0 = pd.read_excel('若羌~四川直流-p_rate-ALS.xlsx', header=None).values
-load_pu = np.concatenate([np.tile(load_0[:, i], days_of_month[i]) for i in range(12)])
+
+# 初始化一个空列表来存储扩展的数据
+expanded_data = []
+load_0 = pd.read_excel('若羌~四川直流-p_rate-ALS.xlsx', header=None).to_numpy()
+# 对每个月份的数据进行扩展
+for i in range(12):
+    for day in range(days_of_month[i]):
+        expanded_data.append(load_0[:, i])
+
+# 将扩展后的数据转换成 NumPy 数组，并重塑为 24 行 365 列
+load_pu = np.array(expanded_data).T
+
+# 确保最终的形状是 (24, 365)
 load_pu = load_pu.reshape((24, 365))
+
+
 Load_max = 6000  # MW
 
 # WT
 N_wt = 1
 WT_cap = 2099
-wt_pu = pd.read_excel('若羌风电-imax_rate-ALS.xlsx', header=None).values
-wt_pu = wt_pu.T.reshape((24, 365))
+wt_pu = pd.read_excel("若羌风电-imax_rate-ALS.xlsx", header=None).to_numpy()
+wt_pu = wt_pu.reshape(365, 24).T
 T_wt = wt_pu.sum(axis=0)
 
 # PV
 N_pv = 1
 PV_cap = 9530
-pv_pu = pd.read_excel('若羌光伏-imax_rate-ALS.xlsx', header=None).values
-pv_pu = pv_pu.reshape((24, 365))
+pv_pu = pd.read_excel("若羌光伏-imax_rate-ALS.xlsx", header=None).to_numpy()
+pv_pu = pv_pu.reshape(365, 24).T
 T_pv = pv_pu.sum(axis=0)
 
 # Gas
