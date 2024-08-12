@@ -26,7 +26,7 @@ def Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap, wt_pu
     soc_year = []
     delta_pgrid = []
 
-    for m in range(D):
+    for m in range(3):
         Load_week = Load_max * load_pu[:, m:m + 7].T
         wt0_week = wt_pu[:, m:m + 7].T
         pv0_week = pv_pu[:, m:m + 7].T
@@ -374,6 +374,12 @@ def Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap, wt_pu
 
         soc_week_Tra[m] = soc_value[0, 24]
 
+        Q_RES_all = Q_RES_all + Q_RES;
+        Q_gas_all = Q_gas_all + Q_gas;
+        Q_Pgrid_all = Q_Pgrid_all + Q_Pgrid;
+        Q_Pbd_all = Q_Pbd_all + Q_Pbd;
+        Q_Pbc_all = Q_Pbc_all + Q_Pbc;
+
         # 添加到年数据中
         Pwt_year.append(Pwt_value)
         Ppv_year.append(Ppv_value)
@@ -445,10 +451,13 @@ def Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap, wt_pu
         ax.set_ylim([-4000, 8000])
 
         # Adjust figure size and layout
-        fig.set_size_inches(15, 8)
+        fig.set_size_inches(18, 10)
         fig.tight_layout()
 
         plt.show()
-        print(Ppv_value)
 
-    return Pwt_year, Ppv_year, Pgas_year, Pabn_year, Pgrid_year, pun_abn_year, Pbd_year, Pbc_year, soc_year, delta_pgrid
+    Rate_abn_all = np.sum(P_abn) / (WT_cap * np.sum(np.sum(T_wt)) + PV_cap * np.sum(np.sum(T_pv)))
+    Rate_QRES = Q_RES_all / (Q_RES_all + Q_gas_all + Q_Pgrid_all)
+    Rate_Qgrid = Q_Pgrid_all / (Load_max * np.sum(np.sum(load_pu)))
+
+    return Rate_abn_all, Rate_QRES, Rate_Qgrid, Pwt_year, Ppv_year, Pgas_year, Pabn_year, Pgrid_year, pun_abn_year, Pbd_year, Pbc_year, soc_year, delta_pgrid

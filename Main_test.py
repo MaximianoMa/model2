@@ -21,15 +21,17 @@ for i in range(12):
         expanded_data.append(load_0[:, i])
 
 # 将扩展后的数据转换成 NumPy 数组，并重塑为 24 行 365 列
+# 读取excel作为输入
 load_pu = np.array(expanded_data).T
 
 # 确保最终的形状是 (24, 365)
 load_pu = load_pu.reshape((24, 365))
 
-
+# 输入
 Load_max = 6000  # MW
 
 # WT
+# 输入
 N_wt = 1
 WT_cap = 2099
 wt_pu = pd.read_excel("若羌风电-imax_rate-ALS.xlsx", header=None).to_numpy()
@@ -91,3 +93,5 @@ results = Year_simulation(D, T, T_week, t_peak, Load_max, load_pu, N_wt, WT_cap,
 # Unpack results
 # (Rate_abn_all, Rate_QRES, Rate_Qgrid, Pwt_year, Ppv_year, Pgas_year, Pabn_year, Pgrid_year,
 #  pun_abn_year, Pbd_year, Pbc_year, soc_year, delta_pgrid) = results
+
+print(results)
